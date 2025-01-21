@@ -43,7 +43,7 @@ def plot_grid(grid, path=None, start=None, goal=None):
 
     
     # Create a color map for the grid
-    cmap = plt.cm.get_cmap('Greys')
+    cmap = plt.cm.get_cmap('Greys').copy()
     cmap.set_under(color='white') # Free space color
     cmap.set_over(color='black') # Obstacle color
     grid_array = np.asarray(grid)
@@ -63,12 +63,13 @@ def plot_grid(grid, path=None, start=None, goal=None):
             ax.arrow(start_x, start_y, end_x - start_x, end_y - start_y,
                 head_width=0.3, head_length=0.3, fc='blue', ec='blue')
         # Plot the last point in the path
-        ax.plot(path[-1][0], path[-1][1], 'b.')
+        ax.plot(path[-1][1], path[-1][0], 'b.')
         # Plot the start and goal points
         if start:
             ax.plot(start[1], start[0], 'go') # Start point in green
         if goal:
             ax.plot(goal[1], goal[0], 'ro') # Goal point in red
+        
     return fig
 
 
@@ -167,13 +168,13 @@ def bfs_run(mapFile):
 def pathPlanningAnalysis():
     file_path = './maps/map1.txt'
     bfs_run(file_path)
-    return
+    
     file_path = './maps/map2.txt'
     bfs_run(file_path)
 
     file_path = './maps/map3.txt'
     bfs_run(file_path)
-
+    plt.show()
 
 
 
