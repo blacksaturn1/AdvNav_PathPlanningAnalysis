@@ -137,8 +137,25 @@ def neighbors_four():
             [0,-1] #left
             ]
 
+def neighbors_8():
+    return [[-1,0], #up
+            [0,1],  #right
+            [1,0],  #down
+            [0,-1], #left
+            
+            [-1,1], #right-up
+            [1,1],  #right-down
+            [1,-1], #left-down
+            [-1,-1] #left-up
+            ]
+
+
+
+
 def get_neighbors(curr, grid):
-    possible_neighbors = neighbors_four()
+    possible_neighbors = neighbors_8()
+    
+    #possible_neighbors = neighbors_four()
     possible_neighbors.reverse()
     neighbors = []
     for pn in possible_neighbors:
