@@ -32,7 +32,7 @@ def read_grid_from_file(file_path):
 
 def readGrid():
     # Example usage
-    file_path = './maps/map1.txt'
+    file_path = './src/maps/map1.txt'
     grid = read_grid_from_file(file_path)
 
 import matplotlib.pyplot as plt
@@ -103,6 +103,7 @@ def plotTest():
 def breath_first_search(start, goal, grid_numerical):
     visited = set()
     queue_to_visit = [start]
+    visited.add(start)
     pathway={}
     path = []
     curr = None
@@ -119,13 +120,12 @@ def breath_first_search(start, goal, grid_numerical):
                     return path
                 curr = pathway[curr]
                 
-        if curr not in visited:
-            visited.add(curr)
-            neighbors = get_neighbors(curr, grid_numerical)
-            for n in neighbors:
-                if n not in visited:
-                    queue_to_visit.append(n)
-                    pathway[n]=curr
+        neighbors = get_neighbors(curr, grid_numerical)
+        for n in neighbors:
+            if n not in visited:
+                queue_to_visit.append(n)
+                visited.add(n)
+                pathway[n]=curr
     return None
                 
         
@@ -183,13 +183,13 @@ def bfs_run(mapFile):
         plot_grid(grid_numerical,path,start_flip,goal_flip)
         
 def pathPlanningAnalysis():
-    file_path = './maps/map1.txt'
+    file_path = './src/maps/map1.txt'
     bfs_run(file_path)
     
-    file_path = './maps/map2.txt'
+    file_path = './src/maps/map2.txt'
     bfs_run(file_path)
 
-    file_path = './maps/map3.txt'
+    file_path = './src/maps/map3.txt'
     bfs_run(file_path)
     plt.show()
 
@@ -206,4 +206,4 @@ if __name__ == "__main__":
     # readGrid()
     # plotTest()
     pathPlanningAnalysis()
-    input("Press any key to exit")
+    #input("Press any key to exit")
