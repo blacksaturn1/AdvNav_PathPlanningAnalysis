@@ -127,7 +127,37 @@ def breath_first_search(start, goal, grid_numerical):
                 visited.add(n)
                 pathway[n]=curr
     return None
+
+def depth_first_search(start, goal, grid_numerical):
+    visited = set()
+    queue_to_visit = [start]
+    visited.add(start)
+    pathway={}
+    path = []
+    curr = None
+    #prev_node = None
+    while queue_to_visit:
+        #prev_node = curr
+        curr = queue_to_visit.pop()
+        
+        if curr == goal:
+            while True:
+                path.append(curr)
+                if curr == start:
+                    path = path[::-1]
+                    return path
+                curr = pathway[curr]
                 
+        neighbors = get_neighbors(curr, grid_numerical)
+        for n in neighbors:
+            if n not in visited:
+                queue_to_visit.append(n)
+                visited.add(n)
+                pathway[n]=curr
+    return None
+                
+
+
         
 
 def neighbors_four():
@@ -138,15 +168,15 @@ def neighbors_four():
             ]
 
 def neighbors_8():
-    return [[-1,0], #up
-            [0,1],  #right
-            [1,0],  #down
-            [0,-1], #left
+    return [[-1,0,0], #up
+            [0,1,0],  #right
+            [1,0,0],  #down
+            [0,-1,0], #left
             
-            [-1,1], #right-up
-            [1,1],  #right-down
-            [1,-1], #left-down
-            [-1,-1] #left-up
+            [-1,1,1], #right-up
+            [1,1,1],  #right-down
+            [1,-1,1], #left-down
+            [-1,-1,1] #left-up
             ]
 
 
@@ -162,35 +192,43 @@ def get_neighbors(curr, grid):
         row = curr[0] + pn[0]
         col = curr[1] + pn[1]
         if 0 <= row < len(grid) and 0 <= col < len(grid[0]) and grid[row][col] == 0:
-            neighbors.append((row, col))
+            if pn[2]==1:
+                if grid[curr[0]+pn[0]][curr[1]]==0 and grid[curr[0]][curr[1]+pn[1]]==0:
+                    neighbors.append((row, col))
+            else:
+                neighbors.append((row, col))
     return neighbors
 
 
 
-def bfs_run(mapFile):
+def run_algo(mapFile,algorithm):
     
     #file_path = './maps/map1.txt'
     grid, start_goals = read_grid_from_file(mapFile)
     grid_numerical = [[1 if cell == 'X' else 0 for cell in row] for row in grid]
     grid_numerical = np.flipud(grid_numerical)
     for start,goal in start_goals:
-        
         #start_flip = (len(grid_numerical)-1-start[0],start[1])
         #goal_flip = (len(grid_numerical)-1-goal[0],goal[1])
         start_flip = start
         goal_flip = goal
-        path = breath_first_search(start_flip,goal_flip,grid_numerical)
+        path = algorithm(start_flip,goal_flip,grid_numerical)
         plot_grid(grid_numerical,path,start_flip,goal_flip)
         
 def pathPlanningAnalysis():
     file_path = './src/maps/map1.txt'
-    bfs_run(file_path)
+    #run_algo(file_path,breath_first_search)
+    #run_algo(file_path,depth_first_search)
+    
     
     file_path = './src/maps/map2.txt'
-    bfs_run(file_path)
+    run_algo(file_path,breath_first_search)
+    #run_algo(file_path,depth_first_search)
 
     file_path = './src/maps/map3.txt'
-    bfs_run(file_path)
+    run_algo(file_path,breath_first_search)
+    #run_algo(file_path,depth_first_search)
+    
     plt.show()
 
 
