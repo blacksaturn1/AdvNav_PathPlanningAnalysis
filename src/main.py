@@ -1,4 +1,5 @@
-    
+
+
 
 
 def read_grid_from_file(file_path):
@@ -22,13 +23,6 @@ def read_grid_from_file(file_path):
                 # Strip the newline character and split by spaces
                 grid.append(line_split)
     return grid,starts_goals
-
-# import time
-# start_time = time.time()
-# # Run the path planning algorithm
-# end_time = time.time()
-# execution_time = end_time - start_time
-# print(f"Execution Time: {execution_time} seconds")
 
 def readGrid():
     # Example usage
@@ -107,11 +101,8 @@ def breath_first_search(start, goal, grid_numerical):
     pathway={}
     path = []
     curr = None
-    #prev_node = None
     while queue_to_visit:
-        #prev_node = curr
         curr = queue_to_visit.pop(0)
-        
         if curr == goal:
             while True:
                 path.append(curr)
@@ -119,7 +110,6 @@ def breath_first_search(start, goal, grid_numerical):
                     path = path[::-1]
                     return path
                 curr = pathway[curr]
-                
         neighbors = get_neighbors(curr, grid_numerical)
         for n in neighbors:
             if n not in visited:
@@ -135,11 +125,8 @@ def depth_first_search(start, goal, grid_numerical):
     pathway={}
     path = []
     curr = None
-    #prev_node = None
     while queue_to_visit:
-        #prev_node = curr
         curr = queue_to_visit.pop()
-        
         if curr == goal:
             while True:
                 path.append(curr)
@@ -155,10 +142,6 @@ def depth_first_search(start, goal, grid_numerical):
                 visited.add(n)
                 pathway[n]=curr
     return None
-                
-
-
-        
 
 def neighbors_four():
     return [[-1,0], #up
@@ -180,8 +163,6 @@ def neighbors_8():
             ]
 
 
-
-
 def get_neighbors(curr, grid):
     possible_neighbors = neighbors_8()
     
@@ -199,23 +180,40 @@ def get_neighbors(curr, grid):
                 neighbors.append((row, col))
     return neighbors
 
-
-
-def run_algo(mapFile,algorithm):
-    
-    #file_path = './maps/map1.txt'
-    grid, start_goals = read_grid_from_file(mapFile)
-    grid_numerical = [[1 if cell == 'X' else 0 for cell in row] for row in grid]
-    grid_numerical = np.flipud(grid_numerical)
-    for start,goal in start_goals:
-        #start_flip = (len(grid_numerical)-1-start[0],start[1])
-        #goal_flip = (len(grid_numerical)-1-goal[0],goal[1])
-        start_flip = start
-        goal_flip = goal
-        path = algorithm(start_flip,goal_flip,grid_numerical)
-        plot_grid(grid_numerical,path,start_flip,goal_flip)
+def run_algo(algorithm,start,goal,grid_numerical):
+    # grid, start_goals = read_grid_from_file(mapFile)
+    # grid_numerical = [[1 if cell == 'X' else 0 for cell in row] for row in grid]
+    # grid_numerical = np.flipud(grid_numerical)
+    # for start,goal in start_goals:
+    #     #start_flip = (len(grid_numerical)-1-start[0],start[1])
+    #     #goal_flip = (len(grid_numerical)-1-goal[0],goal[1])
+    # start_flip = start
+    # goal_flip = goal
+    path = algorithm(start,goal,grid_numerical)
+    plot_grid(grid_numerical,path,start,goal)
         
 def pathPlanningAnalysis():
+    algos = setup()
+    import time
+    for algo in algos:
+        for stat in algos[algo]["stats"]:
+            print(f"Running {algo} on {stat['map']}")
+            grid, start_goals = read_grid_from_file(stat['map'])
+            grid_numerical = [[1 if cell == 'X' else 0 for cell in row] for row in grid]
+            grid_numerical = np.flipud(grid_numerical)
+            for start,goal in start_goals:
+                start_time = time.time()
+                run_algo(algos[algo]["algorithm"],start,goal,grid_numerical)
+                end_time = time.time()
+                execution_time = end_time - start_time
+                stat["execution_times"].append(execution_time)
+                print(f"Execution Time: {execution_time} seconds")
+    plt.show()
+
+
+
+
+    return algos
     file_path = './src/maps/map1.txt'
     #run_algo(file_path,breath_first_search)
     #run_algo(file_path,depth_first_search)
@@ -232,9 +230,63 @@ def pathPlanningAnalysis():
     plt.show()
 
 
+def setup():
+    algorithms = {
+        "BFS": {
+            "algorithm": breath_first_search,
+            "stats": 
+                [
+                    {
+                    "map": "./src/maps/map1.txt",
+                    "execution_times": [],
+                    "memory_usage": []
+                    },
+                    {
+                    "map": "./src/maps/map2.txt",
+                    "execution_times": [],
+                    "memory_usage": []
+                    },
+                    {
+                    "map": "./src/maps/map3.txt",
+                    "execution_times": [],
+                    "memory_usage": []
+                    }
+
+                ]
+                
+
+        },
+                
+        "DFS": {
+            "algorithm": depth_first_search,
+            "stats": 
+                [
+                    {
+                    "map": "./src/maps/map1.txt",
+                    "execution_times": [],
+                    "memory_usage": []
+                    },
+                    {
+                    "map": "./src/maps/map2.txt",
+                    "execution_times": [],
+                    "memory_usage": []
+                    },
+                    {
+                    "map": "./src/maps/map3.txt",
+                    "execution_times": [],
+                    "memory_usage": []
+                    }
+
+                ]
+             }
+    }
+    return algorithms
+    
 
 if __name__ == "__main__":
     # readGrid()
     # plotTest()
-    pathPlanningAnalysis()
+    algos = pathPlanningAnalysis()
+
+    
     #input("Press any key to exit")
