@@ -156,7 +156,7 @@ def get_neighbors(curr, grid):
     possible_neighbors = neighbors_8()
     
     #possible_neighbors = neighbors_four()
-    possible_neighbors.reverse()
+    #possible_neighbors.reverse()
     neighbors = []
     for pn in possible_neighbors:
         row = curr[0] + pn[0]
@@ -192,13 +192,6 @@ def pathPlanningAnalysis():
     file_path = './src/maps/map3.txt'
     bfs_run(file_path)
     plt.show()
-
-
-
-
-    # breath_first_search(start,goal,grid_numerical)
-
-
 
 
 
