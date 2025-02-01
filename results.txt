@@ -1,0 +1,239 @@
+{
+    "BFS": {
+        "algorithm": "breath_first_search",
+        "stats": [
+            {
+                "map": "./src/maps/map1.txt",
+                "execution_times": [
+                    0.0006229877471923828,
+                    0.0005469322204589844,
+                    0.0006258487701416016
+                ],
+                "visited_states_count": [
+                    78,
+                    62,
+                    77
+                ],
+                "memory_usage": [],
+                "path_length": [
+                    15,
+                    11,
+                    13
+                ]
+            },
+            {
+                "map": "./src/maps/map2.txt",
+                "path_length": [
+                    24,
+                    22,
+                    21
+                ],
+                "execution_times": [
+                    0.0013306140899658203,
+                    0.0010843276977539062,
+                    0.0012354850769042969
+                ],
+                "visited_states_count": [
+                    173,
+                    141,
+                    158
+                ]
+            },
+            {
+                "map": "./src/maps/map3.txt",
+                "path_length": [
+                    54,
+                    35,
+                    30
+                ],
+                "execution_times": [
+                    0.006178617477416992,
+                    0.004723548889160156,
+                    0.006292104721069336
+                ],
+                "visited_states_count": [
+                    733,
+                    552,
+                    730
+                ]
+            }
+        ]
+    },
+    "DFS": {
+        "algorithm": "depth_first_search",
+        "stats": [
+            {
+                "map": "./src/maps/map1.txt",
+                "path_length": [
+                    19,
+                    22,
+                    16
+                ],
+                "execution_times": [
+                    0.0002524852752685547,
+                    0.0003972053527832031,
+                    0.0001461505889892578
+                ],
+                "visited_states_count": [
+                    29,
+                    47,
+                    17
+                ]
+            },
+            {
+                "map": "./src/maps/map2.txt",
+                "path_length": [
+                    29,
+                    48,
+                    23
+                ],
+                "execution_times": [
+                    0.0007936954498291016,
+                    0.0007488727569580078,
+                    0.001069784164428711
+                ],
+                "visited_states_count": [
+                    103,
+                    94,
+                    133
+                ]
+            },
+            {
+                "map": "./src/maps/map3.txt",
+                "path_length": [
+                    145,
+                    101,
+                    142
+                ],
+                "execution_times": [
+                    0.002190113067626953,
+                    0.0047719478607177734,
+                    0.004273891448974609
+                ],
+                "visited_states_count": [
+                    279,
+                    583,
+                    467
+                ]
+            }
+        ]
+    },
+    "Dijkstras": {
+        "algorithm": "dijkstra",
+        "stats": [
+            {
+                "map": "./src/maps/map1.txt",
+                "path_length": [
+                    15,
+                    11,
+                    13
+                ],
+                "execution_times": [
+                    0.0008981227874755859,
+                    0.0005776882171630859,
+                    0.0006489753723144531
+                ],
+                "visited_states_count": [
+                    78,
+                    62,
+                    77
+                ]
+            },
+            {
+                "map": "./src/maps/map2.txt",
+                "path_length": [
+                    24,
+                    22,
+                    21
+                ],
+                "execution_times": [
+                    0.0015685558319091797,
+                    0.0012383460998535156,
+                    0.001416921615600586
+                ],
+                "visited_states_count": [
+                    173,
+                    138,
+                    158
+                ]
+            },
+            {
+                "map": "./src/maps/map3.txt",
+                "path_length": [
+                    54,
+                    35,
+                    30
+                ],
+                "execution_times": [
+                    0.007420778274536133,
+                    0.005357980728149414,
+                    0.007206916809082031
+                ],
+                "visited_states_count": [
+                    738,
+                    534,
+                    717
+                ]
+            }
+        ]
+    },
+    "Uniform Cost Search": {
+        "algorithm": "uniform_cost_search",
+        "stats": [
+            {
+                "map": "./src/maps/map1.txt",
+                "path_length": [
+                    15,
+                    11,
+                    13
+                ],
+                "execution_times": [
+                    0.0015416145324707031,
+                    0.001089334487915039,
+                    0.001295328140258789
+                ],
+                "visited_states_count": [
+                    78,
+                    62,
+                    77
+                ]
+            },
+            {
+                "map": "./src/maps/map2.txt",
+                "path_length": [
+                    24,
+                    22,
+                    21
+                ],
+                "execution_times": [
+                    0.0031647682189941406,
+                    0.002370119094848633,
+                    0.0027289390563964844
+                ],
+                "visited_states_count": [
+                    173,
+                    138,
+                    158
+                ]
+            },
+            {
+                "map": "./src/maps/map3.txt",
+                "path_length": [
+                    54,
+                    35,
+                    30
+                ],
+                "execution_times": [
+                    0.014496326446533203,
+                    0.010839700698852539,
+                    0.013903141021728516
+                ],
+                "visited_states_count": [
+                    738,
+                    534,
+                    717
+                ]
+            }
+        ]
+    }
+}

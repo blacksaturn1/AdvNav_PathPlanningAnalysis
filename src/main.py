@@ -1,5 +1,26 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import heapq
 
+plt.ioff()
+plt.ion()
 
+class PriorityQueue:
+    def __init__(self):
+        self.heap = []
+
+    def push(self, item, priority):
+        heapq.heappush(self.heap, (priority, item))
+
+    def pop(self):
+        return heapq.heappop(self.heap)
+
+    def peek(self):
+        return self.heap[0]
+        return self.heap[0][1]
+
+    def is_empty(self):
+        return len(self.heap) == 0
 
 
 def read_grid_from_file(file_path):
@@ -27,13 +48,9 @@ def read_grid_from_file(file_path):
 def readGrid():
     # Example usage
     file_path = './src/maps/map1.txt'
-    grid = read_grid_from_file(file_path)
+    grid, start_goals = read_grid_from_file(file_path)
 
-import matplotlib.pyplot as plt
-import numpy as np
-
-
-def plot_grid(grid, path=None, start=None, goal=None):
+def plot_grid(ax,grid, path=None, start=None, goal=None):
 
     
     # Create a color map for the grid
@@ -41,7 +58,7 @@ def plot_grid(grid, path=None, start=None, goal=None):
     cmap.set_under(color='white') # Free space color
     cmap.set_over(color='black') # Obstacle color
     grid_array = np.asarray(grid)
-    fig, ax = plt.subplots()
+    #fig, ax = plt.subplots()
     # Plot the grid with respect to the upper left-hand corner
     ax.matshow(grid_array, cmap=cmap, vmin=0.1, vmax=1.0, origin='lower')
     ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=1)
@@ -64,7 +81,7 @@ def plot_grid(grid, path=None, start=None, goal=None):
         if goal:
             ax.plot(goal[1], goal[0], 'ro') # Goal point in red
         
-    return fig
+    #return fig
 
 
 def plotTest():
@@ -94,6 +111,90 @@ def plotTest():
     # Plot the grid and path
     f = plot_grid(grid_numerical, path=path, start=start, goal=goal)
 
+def dijkstra(start, goal, grid_numerical):
+    visited = set()
+    #queue_to_visit = [start]
+    queue_to_visit:PriorityQueue = PriorityQueue()
+    costs = {}
+    costs[start]=0
+    queue_to_visit.push(start,0)
+    for i in range(0,len(grid_numerical)):
+        for j in range(0,len(grid_numerical[0])):
+            state = (i,j)
+            if state!=start:
+                costs[state]=float('inf')
+    visited.add(start)
+    predecessor_map={}
+    path = []
+    curr = None
+    counter = 0
+    
+    while queue_to_visit:
+        cost_to_come, curr = queue_to_visit.pop()
+        counter+=1
+        if curr == goal:
+            while True:
+                path.append(curr)
+                if curr == start:
+                    path = path[::-1]
+                    return path, counter
+                curr = predecessor_map[curr]
+        neighbors = get_neighbors(curr, grid_numerical)
+        for n in neighbors:
+            tentative_cost = cost_to_come+1
+            if tentative_cost<costs[n]:
+                queue_to_visit.push(n,tentative_cost)
+                costs[n]=tentative_cost
+                predecessor_map[n]=curr
+            # if n not in visited:
+            #     queue_to_visit.push(n,tentative_cost)
+            #     costs[n]=tentative_cost
+            #     visited.add(n)
+            #     predecessor_map[n]=curr
+            # else:
+            #     if cost_to_come+1<costs[n]:
+            #         queue_to_visit.push(n,tentative_cost)
+            #         costs[n]=tentative_cost
+            #         predecessor_map[n]=curr
+    return None, counter
+
+def uniform_cost_search(start, goal, grid_numerical):
+    visited = set()
+    queue_to_visit = [start]
+    queue_to_visit = PriorityQueue()
+    queue_to_visit.push(start,0)
+    visited.add(start)
+    pathway={}
+    path = []
+    costs = {}
+    costs[start]=0
+
+    curr = None
+    counter = 0
+    while queue_to_visit:
+        cost_to_come, curr = queue_to_visit.pop()
+        counter+=1
+        if curr == goal:
+            while True:
+                path.append(curr)
+                if curr == start:
+                    path = path[::-1]
+                    return path, counter
+                curr = pathway[curr]
+        neighbors = get_neighbors(curr, grid_numerical)
+        for n in neighbors:
+            if n not in visited:
+                queue_to_visit.push(n,cost_to_come+1)
+                costs[n]=cost_to_come+1
+                visited.add(n)
+                pathway[n]=curr
+            else:
+                if cost_to_come+1<costs[n]:
+                    queue_to_visit.push(n,cost_to_come+1)
+                    costs[n]=cost_to_come+1
+                    pathway[n]=curr
+    return None, counter
+
 def breath_first_search(start, goal, grid_numerical):
     visited = set()
     queue_to_visit = [start]
@@ -101,14 +202,16 @@ def breath_first_search(start, goal, grid_numerical):
     pathway={}
     path = []
     curr = None
+    counter = 0
     while queue_to_visit:
         curr = queue_to_visit.pop(0)
+        counter+=1
         if curr == goal:
             while True:
                 path.append(curr)
                 if curr == start:
                     path = path[::-1]
-                    return path
+                    return path, counter
                 curr = pathway[curr]
         neighbors = get_neighbors(curr, grid_numerical)
         for n in neighbors:
@@ -116,23 +219,25 @@ def breath_first_search(start, goal, grid_numerical):
                 queue_to_visit.append(n)
                 visited.add(n)
                 pathway[n]=curr
-    return None
+    return None, counter
 
 def depth_first_search(start, goal, grid_numerical):
     visited = set()
     queue_to_visit = [start]
     visited.add(start)
-    pathway={}
-    path = []
+    pathway={} # dictionary to store the path to previous node
+    path = [] #final list of path
     curr = None
+    counter = 0
     while queue_to_visit:
         curr = queue_to_visit.pop()
+        counter+=1
         if curr == goal:
             while True:
                 path.append(curr)
                 if curr == start:
                     path = path[::-1]
-                    return path
+                    return path, counter
                 curr = pathway[curr]
                 
         neighbors = get_neighbors(curr, grid_numerical)
@@ -141,7 +246,7 @@ def depth_first_search(start, goal, grid_numerical):
                 queue_to_visit.append(n)
                 visited.add(n)
                 pathway[n]=curr
-    return None
+    return None,counter
 
 def neighbors_four():
     return [[-1,0], #up
@@ -189,26 +294,79 @@ def run_algo(algorithm,start,goal,grid_numerical):
     #     #goal_flip = (len(grid_numerical)-1-goal[0],goal[1])
     # start_flip = start
     # goal_flip = goal
-    path = algorithm(start,goal,grid_numerical)
-    plot_grid(grid_numerical,path,start,goal)
-        
+    path,counter = algorithm(start,goal,grid_numerical)
+    #plot_grid(grid_numerical,path,start,goal)
+    return path,counter
+
+
+def plot_metrics(algos: dict,metric: str,xLabel,yLabel,title):
+    # only first map
+    goalsInFirstMap = len(algos[list(algos.keys())[0]]["stats"])
+    for rangeIndex in range(0,goalsInFirstMap):
+        fig, ax = plt.subplots()
+        for algo in algos:
+            stat = algos[algo]["stats"][rangeIndex]
+            plt.plot(stat[metric], label=f"{algo} on {stat['map']}")
+        ax.set_xticks(np.arange(-1.0, goalsInFirstMap, 1))
+        plt.xlabel(xLabel)
+        plt.ylabel(yLabel)
+        plt.title(title)
+        plt.legend()
+        plt.show()
+
+def run_single_algo(map,algo):
+    grid, start_goals = read_grid_from_file(map)
+    grid_numerical = [[1 if cell == 'X' else 0 for cell in row] for row in grid]
+    grid_numerical = np.flipud(grid_numerical)
+    for start,goal in start_goals:
+        run_algo(algo,start,goal,grid_numerical)
+
 def pathPlanningAnalysis():
     algos = setup()
+    # Uncomment to run only one algorithm
+    # algos = {"BFS":algos.get("BFS")}
     import time
     for algo in algos:
+        mapCount = len(algos[algo]["stats"])
+        
+        grid, start_goals = read_grid_from_file(algos[list(algos.keys())[0]]["stats"][0]["map"])
+        goals = len(start_goals)
+        fig, axs = plt.subplots(mapCount, goals)
+        mapIndex = 0
+        
         for stat in algos[algo]["stats"]:
             print(f"Running {algo} on {stat['map']}")
             grid, start_goals = read_grid_from_file(stat['map'])
             grid_numerical = [[1 if cell == 'X' else 0 for cell in row] for row in grid]
             grid_numerical = np.flipud(grid_numerical)
+            goalIndex = 0
             for start,goal in start_goals:
                 start_time = time.time()
-                run_algo(algos[algo]["algorithm"],start,goal,grid_numerical)
+                path, visited_states_count = run_algo(algos[algo]["algorithm"],start,goal,grid_numerical)
                 end_time = time.time()
                 execution_time = end_time - start_time
+                
+                if stat.get("path_length") is None:
+                    stat["path_length"] = []
+                stat["path_length"].append(len(path))
+                plot_grid(axs[mapIndex,goalIndex],grid_numerical,path,start,goal)    
+                
+                if stat.get("execution_times") is None:
+                    stat["execution_times"] = []
                 stat["execution_times"].append(execution_time)
+                
+                if stat.get("visited_states_count") is None:
+                    stat["visited_states_count"] = []
+                stat["visited_states_count"].append(visited_states_count)
+                
                 print(f"Execution Time: {execution_time} seconds")
-    plt.show()
+                print(f"Visited states count: {visited_states_count}")
+                goalIndex+=1
+            mapIndex+=1
+        fig.suptitle(f"{algo}")
+        plt.show()
+                #return algos
+    
 
 
 
@@ -239,54 +397,91 @@ def setup():
                     {
                     "map": "./src/maps/map1.txt",
                     "execution_times": [],
+                    "visited_states_count": [],
                     "memory_usage": []
                     },
                     {
                     "map": "./src/maps/map2.txt",
-                    "execution_times": [],
-                    "memory_usage": []
                     },
                     {
                     "map": "./src/maps/map3.txt",
-                    "execution_times": [],
-                    "memory_usage": []
                     }
 
                 ]
-                
-
+         
         },
-                
         "DFS": {
             "algorithm": depth_first_search,
             "stats": 
                 [
                     {
                     "map": "./src/maps/map1.txt",
-                    "execution_times": [],
-                    "memory_usage": []
                     },
                     {
                     "map": "./src/maps/map2.txt",
-                    "execution_times": [],
-                    "memory_usage": []
                     },
                     {
                     "map": "./src/maps/map3.txt",
-                    "execution_times": [],
-                    "memory_usage": []
                     }
 
                 ]
-             }
-    }
-    return algorithms
+            },
+        "Dijkstras": {
+            "algorithm": dijkstra,
+            "stats": 
+                [
+                    {
+                    "map": "./src/maps/map1.txt",
+                    },
+                    {
+                    "map": "./src/maps/map2.txt",
+                    },
+                    {
+                    "map": "./src/maps/map3.txt",
+                    }
+
+                ]
+            },
+        "Uniform Cost Search": {
+            "algorithm": uniform_cost_search,
+            "stats": 
+                [
+                    {
+                    "map": "./src/maps/map1.txt",
+                    },
+                    {
+                    "map": "./src/maps/map2.txt",
+                    },
+                    {
+                    "map": "./src/maps/map3.txt",
+                    }
+
+                ]
+            }
+        }
     
+    
+    return algorithms
 
 if __name__ == "__main__":
     # readGrid()
     # plotTest()
-    algos = pathPlanningAnalysis()
-
+    #run_single_algo('./src/maps/map3.txt',dijkstra)
+    #run_single_algo('./src/maps/map3.txt',uniform_cost_search)
     
-    #input("Press any key to exit")
+    algos = pathPlanningAnalysis()
+    
+    plot_metrics(algos,"execution_times","Goal # (0-indexed)","Time (s)","Execution Time")
+    plot_metrics(algos,"visited_states_count","Goal # (0-indexed)","Visited States Count","# of States Visited")
+    plot_metrics(algos,"path_length","Goal # (0-indexed)","Path Length","Length of Path")
+    for key in algos:
+        algos[key]["algorithm"] = algos[key]["algorithm"].__name__
+    import json
+    with open("results.txt", "w") as f:
+        f.write(json.dumps(algos, indent=4))    
+    print("Press any key to exit")
+    plt.ioff()
+    plt.show()
+    import sys
+    # sys.stdin.read(1)
+    
