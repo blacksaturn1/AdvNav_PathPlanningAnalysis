@@ -300,14 +300,30 @@ def run_algo(algorithm,start,goal,grid_numerical):
 
 
 def plot_metrics(algos: dict,metric: str,xLabel,yLabel,title):
+    barWidth = 0.25
     # only first map
     goalsInFirstMap = len(algos[list(algos.keys())[0]]["stats"])
+    bar_x=[]
+    br1 = np.arange(goalsInFirstMap) 
+    bar_x.append(br1)
+    br2 = [x + barWidth for x in br1] 
+    bar_x.append(br2)
+    br3 = [x + barWidth for x in br2] 
+    bar_x.append(br3)
+    br4 = [x + barWidth for x in br3] 
+    bar_x.append(br4)
+
     for rangeIndex in range(0,goalsInFirstMap):
         fig, ax = plt.subplots()
+        barIndex = 0
         for algo in algos:
             stat = algos[algo]["stats"][rangeIndex]
-            plt.plot(stat[metric], label=f"{algo} on {stat['map']}")
-        ax.set_xticks(np.arange(-1.0, goalsInFirstMap, 1))
+            #plt.plot(stat[metric], label=f"{algo} on {stat['map']}")
+            # plt.bar(np.arange(len(stat[metric])),stat[metric],label=f"{algo} on {stat['map']}",width=barWidth)
+            plt.bar(bar_x[barIndex],stat[metric],label=f"{algo} on {stat['map']}",width=barWidth)
+            barIndex+=1
+        # ax.set_xticks(np.arange(-1.0, goalsInFirstMap, 1))
+        plt.xticks([r + barWidth for r in range(len(stat[metric]))],['1', '2', '3'])
         plt.xlabel(xLabel)
         plt.ylabel(yLabel)
         plt.title(title)
