@@ -18,6 +18,14 @@ class PriorityQueue:
     def decrease_priority(self, item, oldPriority, newPriority):
         heapq.heappush(self.heap, (newPriority, item))
         self.updated.add((oldPriority,item))
+
+    def decrease_priority_a_star(self, item, oldPriority, newPriority):
+        '''
+        Special optimization for A* algorithm
+        '''
+        heapq.heappush(self.heap, (newPriority, item))
+        if oldPriority!=float('inf'):
+            self.updated.add((oldPriority,item))
         
     def pop(self):
         priority, item = heapq.heappop(self.heap)
@@ -271,7 +279,7 @@ def a_star(start, goal, grid_numerical):
     counter = 0
 
     while queue_to_visit:
-        heuristic_cost, curr = queue_to_visit.pop()
+        _ , curr = queue_to_visit.pop()
         counter+=1
         if curr == goal:
             while True:
@@ -289,10 +297,9 @@ def a_star(start, goal, grid_numerical):
             # Heuristic cost is from the neighbor to the goal!
             new_f_score = new_cost_to_come_g_score+heuristic(n,goal)
             old_f_score = costs[n]
-            old_cost_to_come_g_score = costs_to_come[n]
+            # old_cost_to_come_g_score = costs_to_come[n]
             if new_f_score<old_f_score:
-                queue_to_visit.decrease_priority(n,old_f_score,new_f_score)
-                # queue_to_visit.push(n,new_f_score)
+                queue_to_visit.decrease_priority_a_star(n,old_f_score,new_f_score)
                 costs[n]=new_f_score
                 costs_to_come[n]=new_cost_to_come_g_score
                 pathway[n]=curr
@@ -537,8 +544,8 @@ def run_algo(algorithm,start,goal,grid_numerical):
 
 def plot_metrics(algos: dict,metric: str,xLabel,yLabel,title):
     barWidth = 0.1666
-    # only first map
-    mapCount = 4#len(algos[list(algos.keys())[0]]["stats"])
+    
+    mapCount = 4 #len(algos[list(algos.keys())[0]]["stats"])
     goalCount = 3
     bar_x=[]
     br1 = np.arange(goalCount) 
@@ -559,11 +566,8 @@ def plot_metrics(algos: dict,metric: str,xLabel,yLabel,title):
         barIndex = 0
         for algo in algos:
             stat = algos[algo]["stats"][rangeIndex]
-            #plt.plot(stat[metric], label=f"{algo} on {stat['map']}")
-            # plt.bar(np.arange(len(stat[metric])),stat[metric],label=f"{algo} on {stat['map']}",width=barWidth)
             plt.bar(bar_x[barIndex],stat[metric],label=f"{algo} on {stat['map']}",width=barWidth)
             barIndex+=1
-        # ax.set_xticks(np.arange(-1.0, goalsInFirstMap, 1))
         plt.xticks([r + barWidth for r in range(len(stat[metric]))],['1', '2', '3'])
         plt.xlabel(xLabel)
         plt.ylabel(yLabel)
