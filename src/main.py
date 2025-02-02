@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import heapq
+import math
 
 plt.ioff()
 plt.ion()
@@ -236,8 +237,15 @@ def uniform_cost_search(start, goal, grid_numerical):
         closed.add(curr)
     return None, counter
 
+SQUARE_ROOT_2 = math.sqrt(2)
 def heuristic(node,goal):
-    return abs(node[0]-goal[0])+abs(node[1]-goal[1])
+    # For 4 directions
+    # return abs(node[0]-goal[0])+abs(node[1]-goal[1])
+
+    # For 8 directions see: https://www.geeksforgeeks.org/a-search-algorithm/
+    dx = abs(node[0]-goal[0])
+    dy = abs(node[1]-goal[1])
+    return (dx+dy)+ (SQUARE_ROOT_2-2)*min(dx,dy)
 
 def a_star(start, goal, grid_numerical):
     '''
@@ -274,8 +282,12 @@ def a_star(start, goal, grid_numerical):
                 curr = pathway[curr]
         neighbors = get_neighbors(curr, grid_numerical)
         for n in neighbors:
+            # Small optimization to avoid reprocessing the node
+            if n in closed:
+                continue
             new_cost_to_come_g_score = costs_to_come[curr]+1
-            new_f_score = new_cost_to_come_g_score+heuristic(start,goal)
+            # Heuristic cost is from the neighbor to the goal!
+            new_f_score = new_cost_to_come_g_score+heuristic(n,goal)
             old_f_score = costs[n]
             old_cost_to_come_g_score = costs_to_come[n]
             if new_f_score<old_f_score:
@@ -284,13 +296,6 @@ def a_star(start, goal, grid_numerical):
                 costs[n]=new_f_score
                 costs_to_come[n]=new_cost_to_come_g_score
                 pathway[n]=curr
-                
-            # if new_cost_to_come_g_score<old_cost_to_come_g_score:
-            # # and n not in closed: # we only process the node if it is not in the closed set and its a better path
-            #     queue_to_visit.push(n,new_f_score)
-            #     costs[n]=new_f_score
-            #     costs_to_come[n]=new_cost_to_come_g_score
-            #     pathway[n]=curr
         closed.add(curr)
     return None, counter
 
@@ -377,6 +382,7 @@ def get_neighbors(curr, grid):
         row = curr[0] + pn[0]
         col = curr[1] + pn[1]
         if 0 <= row < len(grid) and 0 <= col < len(grid[0]) and grid[row][col] == 0:
+            # Special logic for 8 directions for diagonal movement to avoid obstacles
             if pn[2]==1:
                 if grid[curr[0]+pn[0]][curr[1]]==0 and grid[curr[0]][curr[1]+pn[1]]==0:
                     neighbors.append((row, col))
