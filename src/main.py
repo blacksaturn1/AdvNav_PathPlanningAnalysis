@@ -431,7 +431,7 @@ def rrt(start, goal, grid):
     counter = 0
     steps = 1
     
-    while counter < 10000:
+    while counter < 100000:
         counter += 1
         random_state = states[random.randint(0, len(states)-1)]
         nearest_neighbor = get_nearest_neighbors(tree, random_state)
