@@ -397,6 +397,67 @@ def get_neighbors(curr, grid):
                 neighbors.append((row, col))
     return neighbors
 
+def extend(grid, nearest_neighbor, random_state, steps,goal):
+    # Placeholder implementation for extend function
+    new_state = nearest_neighbor
+    stepCounter = 0
+    while steps > stepCounter and new_state != random_state and new_state != goal:
+        neighbors = get_neighbors(new_state, grid)
+        new_state = get_nearest_neighbors(neighbors, random_state)
+        stepCounter += 1
+    return new_state
+
+def get_nearest_neighbors(tree, node):
+    # Placeholder implementation for get_nearest_neighbors function
+    min_distance = float('inf')
+    nearest_node = None
+    for key in tree:
+        distance = heuristic(key,node)
+        if distance<min_distance:
+            min_distance = distance
+            nearest_node = key
+    return nearest_node
+    
+
+def line_intersects_obstacle():
+    pass
+
+import random
+def rrt(start, goal, grid):
+    tree={}
+    tree[start] = []
+    predecessor_map = {}
+    states = [(row,col) for row in range(len(grid)) for col in range(len(grid[0])) if grid[row][col] == 0]
+    counter = 0
+    steps = 1
+    
+    while counter < 10000:
+        counter += 1
+        random_state = states[random.randint(0, len(states)-1)]
+        nearest_neighbor = get_nearest_neighbors(tree, random_state)
+        new_state = extend(grid, nearest_neighbor,random_state, steps, goal)
+        if new_state in tree:
+            continue
+        
+        predecessor_map[new_state] = nearest_neighbor
+        tree[new_state] = []
+        if new_state not in tree[nearest_neighbor]:
+            tree[nearest_neighbor].append(new_state)
+        
+        if new_state == goal:
+            path = []
+            curr = new_state
+            while True:
+                path.append(curr)
+                if curr == start:
+                    path = path[::-1]
+                    return path, counter
+                curr = predecessor_map[curr]
+        
+    return None, counter
+
+
+
 def setup():
     algorithms = {
         "BFS": {
@@ -483,26 +544,26 @@ def setup():
 
                 ]
         },
-        "Dijkstras_Optimized": {
-            "algorithm": dijkstra_optimized,
-            "stats": 
-                [
-                    {
-                    "map": "./src/maps/map1.txt",
-                    },
-                    {
-                    "map": "./src/maps/map2.txt",
-                    },
-                    {
-                    "map": "./src/maps/map3.txt",
-                    }
-                    ,
-                    {
-                    "map": "./src/maps/map4.txt",
-                    }
+        # "Dijkstras_Optimized": {
+        #     "algorithm": dijkstra_optimized,
+        #     "stats": 
+        #         [
+        #             {
+        #             "map": "./src/maps/map1.txt",
+        #             },
+        #             {
+        #             "map": "./src/maps/map2.txt",
+        #             },
+        #             {
+        #             "map": "./src/maps/map3.txt",
+        #             }
+        #             ,
+        #             {
+        #             "map": "./src/maps/map4.txt",
+        #             }
 
-                ]
-        },
+        #         ]
+        # },
         "A Star": {
             "algorithm": a_star,
             "stats": 
@@ -522,11 +583,30 @@ def setup():
                     }
 
                 ]
-        }
-        
+        },
     }
     
-    
+    #algorithms = {}
+    algorithms["RRT"] = {
+        "algorithm": rrt,
+        "stats": 
+            [
+                {
+                "map": "./src/maps/map1.txt",
+                },
+                {
+                "map": "./src/maps/map2.txt",
+                },
+                {
+                "map": "./src/maps/map3.txt",
+                }
+                ,
+                {
+                "map": "./src/maps/map4.txt",
+                }
+
+            ]
+    }
     return algorithms
 
 def run_algo(algorithm,start,goal,grid_numerical):
