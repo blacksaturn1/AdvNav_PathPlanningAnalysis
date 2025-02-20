@@ -1,0 +1,46 @@
+Key Differences:
+Handling of the Closed Set (efficient and avoids redundancy)
+
+UCS:
+Nodes are only added to the closed set after all their neighbors have been evaluated.
+        This means a node might be processed multiple times before it is 	finally considered "closed."
+        
+A check (n not in closed) is made inside the loop before pushing a neighbor onto the priority queue.
+
+UCS2:
+
+Nodes are immediately checked against closed at the start of the loop.
+If a node is already in closed, it is skipped entirely (continue statement).
+
+-----------------------------------------------------------------------------
+Initialization of Costs (faster and avoids initialization of all states)
+
+UCS:
+Initializes all states in grid_numerical with a cost of float('inf'), except for the start node.
+        This means iterating over the entire grid before the search even 	begins.
+
+UCS2:
+Only initializes the costs dictionary with {start: 0}.
+        Other nodes are only assigned costs if they are encountered during 	the search.
+---------------------------------------------------------------------------
+
+Path Reconstruction
+
+UCS:
+Uses a while True: loop when reconstructing the path, relying on pathway[curr] to backtrack.
+        This loop continues until it reaches start, then reverses the path.
+
+UCS2:
+Uses a while curr is not None: loop with pathway.get(curr, None), which is slightly cleaner and safer.
+        Avoids potential KeyErrors if curr is not in pathway.
+---------------------------------------------------------------------------
+
+Priority Queue Handling (cleaner view of when the loop terminates)
+
+UCS:
+Uses queue_to_visit.push(start, 0) before initializing the costs dictionary.
+The queue is checked with while queue_to_visit: (implicit truthiness check).
+
+UCS2:
+Uses queue_to_visit.push(start, 0) after initializing the costs dictionary.
+Uses while not queue_to_visit.is_empty():, making the condition explicit.
