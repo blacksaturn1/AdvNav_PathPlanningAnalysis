@@ -281,7 +281,6 @@ def uniform_cost_search(start, goal, grid_numerical):
         # Explore neighbors
         neighbors = get_neighbors(curr, grid_numerical)
         for n in neighbors:
-            # Calculate the new cost to reach this neighbor
             newCost = cost_to_come + 1
             
             # If this path is cheaper, or the neighbor hasn't been visited
