@@ -257,7 +257,6 @@ def uniform_cost_search(start, goal, grid_numerical):
     queue_to_visit.push(start, 0)
     counter = 0
 
-    # Main UCS Loop
     while not queue_to_visit.is_empty():
         # Pop the node with the lowest cost
         cost_to_come, curr = queue_to_visit.pop()
