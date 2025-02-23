@@ -75,6 +75,7 @@ def plot_grid(ax,grid, path=None, start=None, goal=None):
     cmap.set_over(color='black') # Obstacle color
     grid_array = np.asarray(grid)
     #fig, ax = plt.subplots()
+
     # Plot the grid with respect to the upper left-hand corner
     ax.matshow(grid_array, cmap=cmap, vmin=0.1, vmax=1.0, origin='lower')
     ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=1)
@@ -82,6 +83,7 @@ def plot_grid(ax,grid, path=None, start=None, goal=None):
     ax.set_yticks(np.arange(-0.5, len(grid), 1))
     ax.set_xticklabels(range(0, len(grid[0])+1))
     ax.set_yticklabels(range(0, len(grid)+1))
+
     # Plot the path with direction arrows
     if path:
         for i in range(len(path) - 1):
@@ -113,6 +115,7 @@ def plotTest():
     ['.', 'X', '.', '.', '.', '.', 'X', '.', '.', '.'],
     ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.']
     ]
+
     # Convert grid to numerical values for plotting
     # Free space = 0, Obstacle = 1
     grid_numerical = [[1 if cell == 'X' else 0 for cell in row] for row in grid]
@@ -246,7 +249,7 @@ def dijkstra(start, goal, grid_numerical):
 #     return None, counter
 
 
-def uniform_cost_search(start, goal, grid_numerical):
+def uniform_cost_search_v2(start, goal, grid_numerical):
     '''
     Optimized Uniform Cost Search
     '''
@@ -445,7 +448,6 @@ def get_neighbors(curr, grid):
     return neighbors
 
 def extend(grid, nearest_neighbor, random_state, steps,goal):
-    # Placeholder implementation for extend function
     new_state = nearest_neighbor
     stepCounter = 0
     while steps > stepCounter and new_state != random_state and new_state != goal:
@@ -455,7 +457,6 @@ def extend(grid, nearest_neighbor, random_state, steps,goal):
     return new_state
 
 def get_nearest_neighbors(tree, node):
-    # Placeholder implementation for get_nearest_neighbors function
     min_distance = float('inf')
     nearest_node = None
     for key in tree:
@@ -502,8 +503,6 @@ def rrt(start, goal, grid):
                 curr = predecessor_map[curr]
         
     return None, counter
-
-
 
 def setup():
     algorithms = {

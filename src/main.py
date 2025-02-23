@@ -245,6 +245,52 @@ def uniform_cost_search(start, goal, grid_numerical):
         closed.add(curr)
     return None, counter
 
+def uniform_cost_search_v2(start, goal, grid_numerical):
+    '''
+    Optimized Uniform Cost Search
+    '''
+    closed = set()
+    queue_to_visit = PriorityQueue()
+    pathway = {}
+    costs = {start: 0}
+    queue_to_visit.push(start, 0)
+    counter = 0
+
+    while not queue_to_visit.is_empty():
+        # Pop the node with the lowest cost
+        cost_to_come, curr = queue_to_visit.pop()
+        counter += 1
+
+        # Early exit if the goal is reached
+        if curr == goal:
+            # Reconstruct the path by backtracking using the pathway dictionary
+            path = []
+            while curr is not None:
+                path.append(curr)
+                curr = pathway.get(curr, None)
+            return path[::-1], counter  # Return reversed path
+        
+        # If the node has already been visited, skip it
+        if curr in closed:
+            continue
+        
+        # Mark node as visited
+        closed.add(curr)
+
+        # Explore neighbors
+        neighbors = get_neighbors(curr, grid_numerical)
+        for n in neighbors:
+            newCost = cost_to_come + 1
+            
+            # If this path is cheaper, or the neighbor hasn't been visited
+            if n not in costs or newCost < costs[n]:
+                costs[n] = newCost
+                pathway[n] = curr
+                queue_to_visit.push(n, newCost)
+                
+    # If the goal was not reached, return None
+    return None, counter
+
 SQUARE_ROOT_2 = math.sqrt(2)
 def heuristic(node,goal):
     # For 4 directions
@@ -525,7 +571,7 @@ def setup():
                 ]
         },
         "Uniform Cost Search": {
-            "algorithm": uniform_cost_search,
+            "algorithm": uniform_cost_search_v2,
             "stats": 
                 [
                     {
