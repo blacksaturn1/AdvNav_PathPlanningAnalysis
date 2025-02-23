@@ -571,7 +571,7 @@ def setup():
                 ]
         },
         "Uniform Cost Search": {
-            "algorithm": uniform_cost_search,
+            "algorithm": uniform_cost_search_v2,
             "stats": 
                 [
                     {
